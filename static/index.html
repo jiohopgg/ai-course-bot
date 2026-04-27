@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI聊天机器人</title>
+    <style>
+        body{max-width:600px;margin:30px auto;font-family:Microsoft YaHei}
+        #chat-box{height:450px;border:1px solid #ddd;padding:15px;border-radius:8px;overflow-y:auto;background:#f9f9f9}
+        .msg{margin:10px 0;padding:8px 12px;border-radius:6px;max-width:75%}
+        .user{background:#0091ff;color:white;margin-left:auto}
+        .bot{background:#e5e5ea;color:black;margin-right:auto}
+        .row{display:flex}
+        #input{width:78%;padding:10px;border-radius:6px;border:1px solid #ddd}
+        button{padding:10px 16px;background:#0091ff;color:white;border:none;border-radius:6px;cursor:pointer}
+    </style>
+</head>
+<body>
+    <h2>AI 聊天机器人</h2>
+    <div id="chat-box"></div>
+    <br>
+    <input id="input" placeholder="输入你的问题..." autocomplete="off">
+    <button onclick="send()">发送</button>
+
+    <script>
+        async function send() {
+            const msg = document.getElementById("input").value.trim();
+            if (!msg) return;
+
+            const box = document.getElementById("chat-box");
+            box.innerHTML += `<div class="row"><div class="msg user">${msg}</div></div>`;
+            document.getElementById("input").value = "";
+
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+            box.innerHTML += `<div class="row"><div class="msg bot">${data.reply}</div></div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+    </script>
+</body>
+</html>
